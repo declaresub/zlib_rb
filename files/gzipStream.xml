@@ -1,0 +1,1137 @@
+<?xml version="1.0"?>
+<RBProject version="2009r4">
+<block type="Module" ID="1387187312">
+ <ObjName>gzipStream</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(f as FolderItem, openForWriting as Boolean = false)</SourceLine>
+   <SourceLine>if f is nil then</SourceLine>
+   <SourceLine>dim oops as new NilObjectException</SourceLine>
+   <SourceLine>oops.Message = CurrentMethodName + ": parameter f cannot be nil."</SourceLine>
+   <SourceLine>raise oops</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function gzopen lib zlibPath (path as CString, mode as CString) as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>me.gzFile = gzopen(ReplaceAll(f.ShellPath, "\", ""), Mode(openForWriting))</SourceLine>
+   <SourceLine>if me.gzFile = nil then</SourceLine>
+   <SourceLine>dim error as Integer = gzipException.libcErrorCode</SourceLine>
+   <SourceLine>if error &lt;&gt; 0 then</SourceLine>
+   <SourceLine>GZipException.RaiselibcError(error)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>//according to the header file, this case means that the zlib error is Z_MEM_ERROR.</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(GZipException.MEM_ERROR)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>f as FolderItem, openForWriting as Boolean = false</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Create</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function Create(f as FolderItem) As GZipStream</SourceLine>
+   <SourceLine>if f is nil then</SourceLine>
+   <SourceLine>dim oops as new NilObjectException</SourceLine>
+   <SourceLine>oops.Message = CurrentMethodName + ": parameter f cannot be nil."</SourceLine>
+   <SourceLine>raise oops</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>const openForWriting = true</SourceLine>
+   <SourceLine>return new GZipStream(f, openForWriting)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>f as FolderItem</ItemParams>
+  <ItemResult>GZipStream</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Destructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Destructor()</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>if me.gzFile = nil then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function gzclose lib zlibPath (file as Ptr) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim errorcode as Integer = gzclose(me.gzFile)</SourceLine>
+   <SourceLine>#pragma unused errorcode</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>me.gzFile = nil</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Flush</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Flush()</SourceLine>
+   <SourceLine>'ZEXTERN int ZEXPORT    gzflush OF((gzFile file, int flush));</SourceLine>
+   <SourceLine>'/*</SourceLine>
+   <SourceLine>'Flushes all pending output into the compressed file. The parameter</SourceLine>
+   <SourceLine>'flush is as in the deflate() function. The return value is the zlib</SourceLine>
+   <SourceLine>'error number (see function gzerror below). gzflush returns Z_OK if</SourceLine>
+   <SourceLine>'the flush parameter is Z_FINISH and all output could be flushed.</SourceLine>
+   <SourceLine>'gzflush should be called only when strictly necessary because it can</SourceLine>
+   <SourceLine>'degrade compression.</SourceLine>
+   <SourceLine>'*/</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function gzflush lib zlibPath (file as Ptr, flush as Integer) as Integer</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>gzipErrorCode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function gzipErrorCode(g as Ptr) As Integer</SourceLine>
+   <SourceLine>soft declare function gzerror lib zlibPath (file as Ptr, ByRef errnum as Integer) as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim errnum as Integer</SourceLine>
+   <SourceLine>dim m as MemoryBlock = gzerror(g, errnum)</SourceLine>
+   <SourceLine>#pragma unused m</SourceLine>
+   <SourceLine>return errnum</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>g as Ptr</ItemParams>
+  <ItemResult>Integer</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Mode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function Mode(openForWriting as Boolean) As String</SourceLine>
+   <SourceLine>if openForWriting then</SourceLine>
+   <SourceLine>return "wb"</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return "rb"</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>openForWriting as Boolean</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Open</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function Open(f as FolderItem) As GZipStream</SourceLine>
+   <SourceLine>if f is nil then</SourceLine>
+   <SourceLine>dim oops as new NilObjectException</SourceLine>
+   <SourceLine>oops.Message = CurrentMethodName + ": parameter f cannot be nil."</SourceLine>
+   <SourceLine>raise oops</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>return new GZipStream(f)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>f as FolderItem</ItemParams>
+  <ItemResult>GZipStream</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Read</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function Read(count as Integer) As MemoryBlock</SourceLine>
+   <SourceLine>if count &lt; 1 then</SourceLine>
+   <SourceLine>return new MemoryBlock(0)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function gzread lib zlibPath (file as Ptr, buf as Ptr, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim m as new MemoryBlock(count)</SourceLine>
+   <SourceLine>dim result as Integer = gzread(me.gzFile, m, m.Size)</SourceLine>
+   <SourceLine>if result &gt;=  0 then</SourceLine>
+   <SourceLine>return m.LeftB(result)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>'raise new GZipException(me.gzFile)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>count as Integer</ItemParams>
+  <ItemResult>MemoryBlock</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadBoolean</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadBoolean() As Boolean</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(sizeOfBoolean)</SourceLine>
+   <SourceLine>return m.BooleanValue(0)</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Boolean</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadCurrency</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadCurrency() As Currency</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(sizeOfCurrency)</SourceLine>
+   <SourceLine>return m.CurrencyValue(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Currency</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadDouble</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadDouble() As Double</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(sizeOfDouble)</SourceLine>
+   <SourceLine>return m.DoubleValue(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Double</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadInt16</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadInt16() As Int16</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(sizeOfInt16)</SourceLine>
+   <SourceLine>return m.Int16Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Int16</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadInt32() As Int32</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(sizeOfInt32)</SourceLine>
+   <SourceLine>return m.Int32Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Int32</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadInt64() As Int64</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(8)</SourceLine>
+   <SourceLine>return m.Int64Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Int64</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadInt8</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadInt8() As Int8</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(1)</SourceLine>
+   <SourceLine>return m.Int8Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Int8</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadPString</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadPString() As String</SourceLine>
+   <SourceLine>return me.Read(me.ReadUInt8)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadSingle</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadSingle() As Single</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(4)</SourceLine>
+   <SourceLine>return m.SingleValue(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Single</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadUInt16</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadUInt16() As UInt16</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(2)</SourceLine>
+   <SourceLine>return m.UInt16Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>UInt16</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadUInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadUInt32() As Uint32</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(4)</SourceLine>
+   <SourceLine>return m.UInt32Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Uint32</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadUInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadUInt64() As UInt64</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(8)</SourceLine>
+   <SourceLine>return m.UInt64Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>UInt64</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>ReadUInt8</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Function ReadUInt8() As UInt8</SourceLine>
+   <SourceLine>dim m as MemoryBlock = me.Read(1)</SourceLine>
+   <SourceLine>return m.UInt8Value(0)</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>UInt8</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>Write</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Write(text as String)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, buf as CString, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, text, LenB(text))</SourceLine>
+   <SourceLine>//note that bytesWritten = 0 is not an error if text = "".  That text = "" is not an error remains to be tested on all platforms.</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>text as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteBoolean</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteBoolean(value as Boolean)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Boolean, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfBoolean)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Boolean</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteCurrency</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteCurrency(value as Currency)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Currency, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfCurrency)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Currency</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteDouble</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteDouble(value as Double)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Double, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfDouble)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Double</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt16</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt16(value as Int16)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Int16, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt16)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int16</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt32(value as Int32)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Int32, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt32)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int32</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt64(value as Int64)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Int64, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt64)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int64</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteInt8</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteInt8(value as Int8)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Int8, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt8)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Int8</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WritePString</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WritePString(s as String)</SourceLine>
+   <SourceLine>me.WriteUInt8 Min(LenB(s), 255)</SourceLine>
+   <SourceLine>me.Write LeftB(s, 255)</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>s as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteSingle</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteSingle(value as Single)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as Single, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfSingle)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as Single</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteUInt16</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteUInt16(value as UInt16)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as UInt16, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt16)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as UInt16</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteUInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteUInt32(value as UInt32)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as UInt32, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt32)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as UInt32</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteUInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteUInt64(value as UInt64)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as UInt64, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt64)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as UInt64</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>WriteUInt8</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub WriteUInt8(value as UInt8)</SourceLine>
+   <SourceLine>soft declare function gzwrite lib zlibPath (file as Ptr, ByRef buf as UInt8, len as UInt32) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim bytesWritten as Integer = gzwrite(me.gzFile, value, sizeOfInt8)</SourceLine>
+   <SourceLine>if bytesWritten &lt;= 0 then</SourceLine>
+   <SourceLine>GZipException.RaisegzipError(gzipErrorCode(me.gzFile))</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>value as UInt8</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Note>
+  <ItemName>Documentation</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <NoteLine>Documentation</NoteLine>
+   <NoteLine>zlib</NoteLine>
+   <NoteLine>3/22/2007</NoteLine>
+   <NoteLine>charles@declareSub.com</NoteLine>
+   <NoteLine>http://www.declareSub.com</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>zlib is a wrapper for the zlib compression library, available on Mac OS X, Linux, and Windows.</NoteLine>
+   <NoteLine>It currently consists of a module, zlib, and a class, gzipStream.  Documentation for the zlib module</NoteLine>
+   <NoteLine>can be found in the module.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>gzipStream is a stream object not unlike BinaryStream that allows to write to and read from files.</NoteLine>
+   <NoteLine>Inputs to write methods and outputs from read methods are uncompressed.  Byte size parameters are</NoteLine>
+   <NoteLine>for uncompressed data.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Properties</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>EOF as Boolean (read-only)</NoteLine>
+   <NoteLine>  EOF returns true if you are at the end of the file.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>IsOpen as Boolean (read-only)</NoteLine>
+   <NoteLine>  IsOpen returns true if the file passed in the constructor (see below) was opened for reading or writing. </NoteLine>
+   <NoteLine>  You can use this property to check whether the constructor succeeded.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Position as Integer (read-only)</NoteLine>
+   <NoteLine>  Position returns the current position of the stream cursor, in terms of uncompressed bytes.  Currently this property is read-only.</NoteLine>
+   <NoteLine>  zlib supports setting the cursor position, but its usage is complicated. I can add it if there is demand.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Shared Methods.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Function Create(f as FolderItem)as GZipStream</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>If f is nil, expect a NilObjectException.  Creates a GZipStream for writing data to compress at f.  </NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Function Open(f as FolderItem)as GZipStream</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>If f is nil, expect a NilObjectException.  If f does not exist, a GZipException should be raised.  Opens a GZipStream for reading compressed data.  It will also</NoteLine>
+   <NoteLine>open files not compressed, and read from them.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Methods</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Function Read(count as Integer) as String</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Read returns an uncompressed string of length at most count bytes from the file.  It may return a shorter string if, for instance, you</NoteLine>
+   <NoteLine>hit the end of the file.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>There are more convenience functions that read from the file and return data in various datatypes.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Sub Write(text as String)</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Write writes the passed string to the file in compressed format.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>As with Read, there are several convenience methods to write values of other datatypes to a file.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Using gzipStream</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>The file is opened using Create or Open, and flushed and closed in the object destructor.  There is no Close method.</NoteLine>
+   <NoteLine>So to write data to a new compressed file, you can do the following.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>dim b as BinaryStream = BinaryStream.Open(f)</NoteLine>
+   <NoteLine>dim gz as GZipStream = GZipStream.Create(f_gz)</NoteLine>
+   <NoteLine>gzip.Write b.Read(b.Length)</NoteLine>
+   <NoteLine>gzip = nil (or let it go out of scope)</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Reading data from a compressed file is more work, because there does not</NoteLine>
+   <NoteLine>appear to be a way to retrieve the length of the uncompressed data.  So you should do something </NoteLine>
+   <NoteLine>like this.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>dim g as GZipStream = GZipStream.Open(f_gz)</NoteLine>
+   <NoteLine>dim b as BinaryStream = BinaryStream.Create(f)</NoteLine>
+   <NoteLine>dim uncompressedData() as String</NoteLine>
+   <NoteLine>do until gzip.EOF</NoteLine>
+   <NoteLine>  b.Write gzip.Read(65536)</NoteLine>
+   <NoteLine>loop</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>You can fiddle with the block size for reads; the number above was chosen for no particular reason.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>Decompressing a file into memory:</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>There are a few ways of decompressing a file into memory.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>dim g as GZipStream = GZipStream.Open(f_gz)</NoteLine>
+   <NoteLine>dim b as new BinaryStream(new MemoryBlock(0))</NoteLine>
+   <NoteLine>do until gzip.EOF</NoteLine>
+   <NoteLine>b.Write gzip.Read(65536)</NoteLine>
+   <NoteLine>loop</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>You now have the data in a BinaryStream backed by a MemoryBlock.</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>dim g as GZipStream = GZipStream.Open(f_gz)</NoteLine>
+   <NoteLine>dim buffer() as String</NoteLine>
+   <NoteLine>do until gzip.EOF</NoteLine>
+   <NoteLine>buffer.Append gzip.Read(65536)</NoteLine>
+   <NoteLine>loop</NoteLine>
+   <NoteLine>g = nil</NoteLine>
+   <NoteLine>dim data as String = Join(buffer, "")</NoteLine>
+   <NoteLine></NoteLine>
+   <NoteLine>This gives you the uncompressed data in a String.</NoteLine>
+  </ItemSource>
+  <ItemFlags>0</ItemFlags>
+ </Note>
+ <Property>
+  <ItemName>EOF</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>EOF As Boolean</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>EOF As Boolean</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <SetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Set</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Set</SourceLine>
+  </SetAccessor>
+  <GetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Get</SourceLine>
+   <SourceLine>//Computed property handlers can be invoked by the debugger.  Thus I check the value of gzFile</SourceLine>
+   <SourceLine>//even though the constructor is designed to raise an exception if me.gzfile cannot be set to a non-nil value.</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>soft declare function gzeof lib zlibPath (file as Ptr) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>return (me.gzFile = nil) or (gzeof(me.gzFile) = 1)</SourceLine>
+   <SourceLine>End Get</SourceLine>
+  </GetAccessor>
+ </Property>
+ <Property>
+  <ItemName>gzFile</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>gzFile As Ptr</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>gzFile As Ptr</ItemDeclaration>
+  <ItemFlags>33</ItemFlags>
+  <Shared>0</Shared>
+ </Property>
+ <Property>
+  <ItemName>Position</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Position As Integer</SourceLine>
+   <SourceLine></SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemDeclaration>Position As Integer</ItemDeclaration>
+  <ItemFlags>0</ItemFlags>
+  <Shared>0</Shared>
+  <SetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Set</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Set</SourceLine>
+  </SetAccessor>
+  <GetAccessor>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Get</SourceLine>
+   <SourceLine>if me.gzFile &lt;&gt; nil then</SourceLine>
+   <SourceLine>soft declare function gztell lib zlibPath (file as Ptr) as Integer</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>return gztell(me.gzFile)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return 0</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Get</SourceLine>
+  </GetAccessor>
+ </Property>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>EOF</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Boolean</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Position</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <ItemType>Integer</ItemType>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>Object</InheritsFrom>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>LibraryPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>LibraryPath</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>33</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/nptl/libc.so</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>System.framework</ItemDef>
+  </ConstantInstance>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfBoolean</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfBoolean</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>1</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfCurrency</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfCurrency</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>8</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfDouble</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfDouble</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>8</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfInt16</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfInt16</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>2</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfInt32</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfInt32</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>4</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfInt64</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfInt64</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>8</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfInt8</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfInt8</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>1</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>sizeOfSingle</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>sizeOfSingle</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>4</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>zlibPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>zlibPath</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>33</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/libz.dylib</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>2</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>ZLIB1.DLL</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/libz.so.1</ItemDef>
+  </ConstantInstance>
+ </Constant>
+</block>
+</RBProject>

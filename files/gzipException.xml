@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+<RBProject version="2009r4">
+<block type="Module" ID="721664000">
+ <ObjName>gzipException</ObjName>
+ <ObjContainerID>0</ObjContainerID>
+ <IsClass>1</IsClass>
+ <Superclass>IOException</Superclass>
+ <ItemFlags>1</ItemFlags>
+ <IsInterface>0</IsInterface>
+ <Compatibility></Compatibility>
+ <Method>
+  <ItemName>Constructor</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Sub Constructor(errorcode as Integer, message as String)</SourceLine>
+   <SourceLine>self.ErrorNumber = errorcode</SourceLine>
+   <SourceLine>self.Message = message</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>4129</ItemFlags>
+  <Shared>0</Shared>
+  <ItemParams>errorcode as Integer, message as String</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>gzipErrorMessage</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function gzipErrorMessage(errcode as Integer) As String</SourceLine>
+   <SourceLine>soft declare function zError lib zlibPath (errnum as Integer) as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim m as MemoryBlock = zError(errcode)</SourceLine>
+   <SourceLine>if m &lt;&gt; nil then</SourceLine>
+   <SourceLine>return DefineEncoding(m.CString(0), Encodings.ASCII)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>return ""</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>errcode as Integer</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>libcErrorCode</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Function libcErrorCode() As Integer</SourceLine>
+   <SourceLine>#if TargetMacOS</SourceLine>
+   <SourceLine>soft declare function libcErrorCode lib LibraryPath alias "__error" () as Ptr</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>#if TargetLinux</SourceLine>
+   <SourceLine>soft declare function libcErrorCode lib LibraryPath alias "__errno_location" () as Ptr</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>#if TargetWin32</SourceLine>
+   <SourceLine>soft declare function winErrorCode lib LibraryPath alias "_get_errno" (ByRef pValue as Integer) as Integer</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if TargetMacOS or TargetLinux</SourceLine>
+   <SourceLine>dim m as MemoryBlock = libcErrorCode()</SourceLine>
+   <SourceLine>If m is nil then</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>Return -1</SourceLine>
+   <SourceLine>End if</SourceLine>
+   <SourceLine>Return m.Long(0)</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>#if TargetWin32</SourceLine>
+   <SourceLine>dim theErrorCode as Integer = 0</SourceLine>
+   <SourceLine>dim winErrorCodeResult as Integer = winErrorCode(theErrorCode)</SourceLine>
+   <SourceLine>if winErrorCodeResult = 0 then</SourceLine>
+   <SourceLine>Return theErrorCode</SourceLine>
+   <SourceLine>Else</SourceLine>
+   <SourceLine>Return winErrorCodeResult</SourceLine>
+   <SourceLine>End if</SourceLine>
+   <SourceLine>#endif</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams></ItemParams>
+  <ItemResult>Integer</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>libcErrorMessage</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine>Shared Function libcErrorMessage(errcode as Integer) As String</SourceLine>
+   <SourceLine>soft declare function strerror Lib LibraryPath (errcode as Integer)  as Ptr</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>dim errorMsg as MemoryBlock = strerror(errcode)</SourceLine>
+   <SourceLine>if errorMsg &lt;&gt; nil then</SourceLine>
+   <SourceLine>return DefineEncoding(errorMsg.CString(0), Encodings.SystemDefault)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>//something bad has happened</SourceLine>
+   <SourceLine>return ""</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Function</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>33</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>errcode as Integer</ItemParams>
+  <ItemResult>String</ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RaiseError</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Sub RaiseError(gziperrorcode as Integer)</SourceLine>
+   <SourceLine>if gziperrorcode = ERRNO then</SourceLine>
+   <SourceLine>RaiselibcError(libcErrorCode)</SourceLine>
+   <SourceLine>else</SourceLine>
+   <SourceLine>RaiseGzipError(gziperrorcode)</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>gziperrorcode as Integer</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RaisegzipError</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Sub RaisegzipError(errorcode as Integer)</SourceLine>
+   <SourceLine>if errorcode &gt;= 0 then</SourceLine>
+   <SourceLine>return</SourceLine>
+   <SourceLine>end if</SourceLine>
+   <SourceLine></SourceLine>
+   <SourceLine>raise new GZipException(errorcode, gzipErrorMessage(errorcode))</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>errorcode as Integer</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <Method>
+  <ItemName>RaiselibcError</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <ItemSource>
+   <TextEncoding>134217984</TextEncoding>
+   <SourceLine> Shared Sub RaiselibcError(errorcode as Integer)</SourceLine>
+   <SourceLine>raise new GZipException(errorcode, libcErrorMessage(errorcode))</SourceLine>
+   <SourceLine>End Sub</SourceLine>
+  </ItemSource>
+  <TextEncoding>134217984</TextEncoding>
+  <AliasName></AliasName>
+  <ItemFlags>0</ItemFlags>
+  <Shared>1</Shared>
+  <ItemParams>errorcode as Integer</ItemParams>
+  <ItemResult></ItemResult>
+ </Method>
+ <ViewBehavior>
+  <ViewProperty>
+   <ObjName>ErrorNumber</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Index</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <PropertyValue>-2147483648</PropertyValue>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Left</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Message</ObjName>
+   <PropertyGroup>Behavior</PropertyGroup>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Name</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Super</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>ID</PropertyGroup>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+  <ViewProperty>
+   <ObjName>Top</ObjName>
+   <Visible>1</Visible>
+   <PropertyGroup>Position</PropertyGroup>
+   <PropertyValue>0</PropertyValue>
+   <InheritsFrom>RuntimeException</InheritsFrom>
+  </ViewProperty>
+ </ViewBehavior>
+ <Constant>
+  <ItemName>BUF_ERROR</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>BUF_ERROR</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-5</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>DATA_ERROR</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>DATA_ERROR</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-3</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>ERRNO</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>ERRNO</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-1</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>LibraryPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>LibraryPath</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>33</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/nptl/libc.so</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>System.framework</ItemDef>
+  </ConstantInstance>
+ </Constant>
+ <Constant>
+  <ItemName>MEM_ERROR</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>MEM_ERROR</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-4</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>NEED_DICT</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>NEED_DICT</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>2</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>OK</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>OK</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>0</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>STREAM_END</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>STREAM_END</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>1</ItemDef>
+  <ItemFlags>33</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>STREAM_ERROR</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>STREAM_ERROR</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-2</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>VERSION_ERROR</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>VERSION_ERROR</ItemName>
+  <ItemType>2</ItemType>
+  <ItemDef>-6</ItemDef>
+  <ItemFlags>0</ItemFlags>
+ </Constant>
+ <Constant>
+  <ItemName>zlibPath</ItemName>
+  <Compatibility></Compatibility>
+  <Visible>1</Visible>
+  <TextEncoding>134217984</TextEncoding>
+  <ItemName>zlibPath</ItemName>
+  <ItemType>0</ItemType>
+  <ItemDef></ItemDef>
+  <ItemFlags>33</ItemFlags>
+  <ConstantInstance>
+   <ItemPlatform>1</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/libz.dylib</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>2</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>ZLIB1.DLL</ItemDef>
+  </ConstantInstance>
+  <ConstantInstance>
+   <ItemPlatform>5</ItemPlatform>
+   <ItemLanguage>0</ItemLanguage>
+   <ItemDef>/usr/lib/libz.so.1</ItemDef>
+  </ConstantInstance>
+ </Constant>
+</block>
+</RBProject>
